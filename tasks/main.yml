@@ -1,0 +1,27 @@
+---
+# tasks file for kafka
+
+- name: Create the data directory
+  file: path=/data/kafka/data state=directory 
+
+- name: Launch kafka
+  docker_container:
+    image: confluentinc/cp-kafka:{{ version }}
+    name: kafka
+    hostname: "kafka"
+    ports:
+      - "{{ kafka_port }}:{{ kafka_port }}"
+      - "49999:49999"
+    volumes:
+      - "/data/kafka/data/:/var/lib/kafka/"
+    env:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_BROKER_ID:  "{{ inventory_hostname | regex_search('[0-9]') }}"
+      KAFKA_ADVERTISED_HOST_NAME: "{{ inventory_hostname }}.{{ domain }}"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://{{ inventory_hostname }}.{{ domain }}:{{ kafka_port }}"
+      KAFKA_ZOOKEEPER_CONNECT: "{{ zookeeper_servers }}"
+      KAFKA_NUM_PARTITIONS: 9
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_JMX_PORT: 49999 
+      KAFKA_JMX_HOSTNAME: "{{ inventory_hostname }}"
+    restart_policy: unless-stopped

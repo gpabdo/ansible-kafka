@@ -1,0 +1,20 @@
+---
+# defaults file for kafka
+
+#
+# What verion of kafka?
+#
+version: 4.0.0
+
+#
+# Port to put kafka on
+#
+kafka_port: 9092
+
+#
+# Persistant storage settings.
+#
+data_dir: /kafka/data/
+owner: data
+group: data
+mode: 777
